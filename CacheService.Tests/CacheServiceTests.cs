@@ -73,11 +73,9 @@ namespace CacheService.Tests
                 [1] = new CacheItemModel<string>() { Value = "test", LastAccessTime = DateTime.Now, ExpirationTime = DateTime.Now.AddSeconds(120) }
             };
 
-            Mock<IStorage<int, string>> storageMock = GetStorageMock(cachedItems);
+            Mock<IStorage<int, string>> storageMock;
 
-            Mock<StorageFactory<int, string>> storageFactoryMock = GetStorageFactoryMock(storageMock);
-
-            var cacheService = new CacheService<int, string>(storageFactoryMock.Object);
+            var cacheService = GetCacheServiceWithDefaultCapacity(cachedItems, out storageMock);
 
             // Act
             cacheService.AddItem(keyCache, valueCache, lifeTimeInSecond);
@@ -124,11 +122,9 @@ namespace CacheService.Tests
                 [1] = new CacheItemModel<string>() { Value = "test", LastAccessTime = DateTime.Now, ExpirationTime = DateTime.Now.AddSeconds(120) }
             };
 
-            Mock<IStorage<int?, string>> storageMock = GetStorageMock(cachedItems);
+            Mock<IStorage<int?, string>> storageMock;
 
-            Mock<StorageFactory<int?, string>> storageFactoryMock = GetStorageFactoryMock(storageMock);
-
-            var cacheService = new CacheService<int?, string>(storageFactoryMock.Object);
+            var cacheService = GetCacheServiceWithDefaultCapacity(cachedItems, out storageMock);
 
             // Act - Assert
             Assert.Throws<ArgumentNullException>(() => cacheService.AddItem(keyCache, valueCache, lifeTimeInSecond));
@@ -148,11 +144,9 @@ namespace CacheService.Tests
                 [1] = new CacheItemModel<string>() { Value = "test", LastAccessTime = DateTime.Now, ExpirationTime = DateTime.Now.AddSeconds(120) }
             };
 
-            Mock<IStorage<int?, string>> storageMock = GetStorageMock(cachedItems);
+            Mock<IStorage<int?, string>> storageMock;
 
-            Mock<StorageFactory<int?, string>> storageFactoryMock = GetStorageFactoryMock(storageMock);
-
-            var cacheService = new CacheService<int?, string>(storageFactoryMock.Object);
+            var cacheService = GetCacheServiceWithDefaultCapacity(cachedItems, out storageMock);
 
             // Act - Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => cacheService.AddItem(keyCache, valueCache, lifeTimeInSecond));
@@ -176,11 +170,9 @@ namespace CacheService.Tests
                 [1] = new CacheItemModel<string>() { Value = "test", LastAccessTime = DateTime.Now, ExpirationTime = DateTime.Now.AddSeconds(120) }
             };
 
-            Mock<IStorage<int?, string>> storageMock = GetStorageMock(cachedItems);
+            Mock<IStorage<int?, string>> storageMock;
 
-            Mock<StorageFactory<int?, string>> storageFactoryMock = GetStorageFactoryMock(storageMock);
-
-            var cacheService = new CacheService<int?, string>(storageFactoryMock.Object);
+            var cacheService = GetCacheServiceWithDefaultCapacity(cachedItems, out storageMock);
 
             // Act
             var cachedValue = cacheService.GetItem(keyCache);
@@ -200,12 +192,10 @@ namespace CacheService.Tests
                 [1] = new CacheItemModel<string>() { Value = "test", LastAccessTime = DateTime.Now, ExpirationTime = DateTime.Now.AddSeconds(120) }
             };
 
-            Mock<IStorage<int?, string>> storageMock = GetStorageMock(cachedItems);
+            Mock<IStorage<int?, string>> storageMock;
 
-            Mock<StorageFactory<int?, string>> storageFactoryMock = GetStorageFactoryMock(storageMock);
+            var cacheService = GetCacheServiceWithDefaultCapacity(cachedItems, out storageMock);
 
-            var cacheService = new CacheService<int?, string>(storageFactoryMock.Object);
-           
             // Act - Assert       
             Assert.Throws<ArgumentNullException>(() => cacheService.GetItem(keyCache));
 
@@ -221,11 +211,9 @@ namespace CacheService.Tests
                 [1] = new CacheItemModel<string>() { Value = "test", LastAccessTime = DateTime.Now, ExpirationTime = DateTime.Now.AddSeconds(120) }
             };
 
-            Mock<IStorage<int?, string>> storageMock = GetStorageMock(cachedItems);
+            Mock<IStorage<int?, string>> storageMock;
 
-            Mock<StorageFactory<int?, string>> storageFactoryMock = GetStorageFactoryMock(storageMock);
-
-            var cacheService = new CacheService<int?, string>(storageFactoryMock.Object);
+            var cacheService = GetCacheServiceWithDefaultCapacity(cachedItems, out storageMock);
 
             // Act - Assert       
             Assert.Throws<CachedItemNotFoundException>(() => cacheService.GetItem(keyCache));
@@ -243,13 +231,9 @@ namespace CacheService.Tests
                 [2] = new CacheItemModel<string>() { Value = "test", LastAccessTime = DateTime.Now, ExpirationTime = DateTime.Now.AddSeconds(1) }
             };
 
-            Mock<IStorage<int?, string>> storageMock; //= GetStorageMock(cachedItems);
+            Mock<IStorage<int?, string>> storageMock; 
 
-            //Mock<StorageFactory<int?, string>> storageFactoryMock; //= GetStorageFactoryMock(storageMock);            
-
-            // var cacheService = new CacheService<int?, string>(storageFactoryMock.Object);
-
-            var cacheService = GetCacheService(cachedItems, out storageMock);
+            var cacheService = GetCacheServiceWithDefaultCapacity(cachedItems, out storageMock);
 
             // Act - Assert 
             Task.Delay(1000).Wait();
@@ -261,7 +245,7 @@ namespace CacheService.Tests
 
         #endregion GetItem tests
 
-        private CacheService<TKey, TValue> GetCacheService<TKey, TValue>(Dictionary<TKey, CacheItemModel<TValue>> cachedItems, out Mock<IStorage<TKey, TValue>> storageMock)
+        private CacheService<TKey, TValue> GetCacheServiceWithDefaultCapacity<TKey, TValue>(Dictionary<TKey, CacheItemModel<TValue>> cachedItems, out Mock<IStorage<TKey, TValue>> storageMock)
         {
             storageMock = GetStorageMock(cachedItems);
 
