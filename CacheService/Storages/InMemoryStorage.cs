@@ -82,7 +82,7 @@ namespace CacheService.Storages
 
             if (cachedItems.ContainsKey(key))
             {
-                throw new ArithmeticException($"The item with key {key} already exists.");
+                throw new ArgumentException($"The item with key {key} already exists.");
             }
 
             var item = new CacheItemModel<TValue>() { Value = value, ExpirationTime = DateTime.Now.AddSeconds(lifeTime), LastAccessTime = DateTime.Now };            
