@@ -71,14 +71,12 @@ namespace CacheService
 
             CacheItemModel<TItem> cachedItem = null;
 
-            try
+            if (!cacheStorage.IsCachedItem(key))
             {
-                cachedItem = cacheStorage.Get(key);
+                throw new CachedItemNotFoundException($"The data with key {key} is not found.");
             }
-            catch (CachedItemNotFoundException ex)
-            {
-                throw;
-            }            
+
+            cachedItem = cacheStorage.Get(key);
 
             if (cachedItem.IsExpired())
             {
@@ -101,8 +99,7 @@ namespace CacheService
 
         private void CheckKey(TKey key)
         {
-            // but if type will be nullable struct
-            if (!typeof(TKey).IsValueType && ReferenceEquals(key, null))
+            if(EqualityComparer<TKey>.Default.Equals(key, default(TKey)))
             {
                 throw new ArgumentNullException($"The {nameof(key)} can not be null.");
             }
